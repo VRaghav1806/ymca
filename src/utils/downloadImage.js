@@ -1,4 +1,5 @@
 import { toPng } from 'html-to-image';
+import { saveAs } from 'file-saver';
 
 export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png') => {
   const element = document.getElementById(elementId);
@@ -37,17 +38,8 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png')
       }
     }
 
-    // Fallback standard download using Blob URL (Fixes Android download failures)
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Cleanup
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    // Ultimate fallback standard download using file-saver (Handles Android/iOS quirks automatically)
+    saveAs(blob, filename);
     
     return true;
   } catch (error) {
