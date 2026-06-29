@@ -18,10 +18,12 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png')
       }
     });
     
+    // Convert data URL to Blob for reliable downloading and sharing
+    const blob = await (await fetch(dataUrl)).blob();
+
     // Attempt native Web Share API for mobile devices
     if (isMobile && navigator.canShare) {
       try {
-        const blob = await (await fetch(dataUrl)).blob();
         const file = new File([blob], filename, { type: 'image/png' });
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
@@ -31,17 +33,21 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png')
           return true; // Successfully shared/saved natively!
         }
       } catch (shareError) {
-        console.log('Web Share API failed, falling back to standard download', shareError);
+        console.log('Web Share API failed or cancelled, falling back to standard download', shareError);
       }
     }
 
-    // Fallback standard download
+    // Fallback standard download using Blob URL (Fixes Android download failures)
+    const blobUrl = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = dataUrl;
+    link.href = blobUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    // Cleanup
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
     
     return true;
   } catch (error) {
