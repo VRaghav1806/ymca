@@ -1,16 +1,14 @@
-import { toJpeg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 
-export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.jpg') => {
+export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png') => {
   const element = document.getElementById(elementId);
   if (!element) return { success: false };
 
   try {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // Use JPEG instead of PNG. JPEGs are 10x smaller, which means the resulting
-    // Data URL is short enough that Android's Download Manager won't crash when parsing it.
-    const dataUrl = await toJpeg(element, {
-      quality: 0.85,
+    // Generate a high-resolution PNG canvas
+    const dataUrl = await toPng(element, {
       pixelRatio: isMobile ? 1 : 2, 
       style: {
         transform: 'none',
