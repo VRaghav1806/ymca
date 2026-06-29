@@ -67,7 +67,7 @@ export const Sidebar = ({
           />
         ))}
 
-        <DownloadButton className="mt-6 mb-4" />
+        <DownloadButton />
       </div>
     </div>
   );
