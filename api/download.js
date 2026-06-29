@@ -1,12 +1,32 @@
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 export default function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { image, filename } = req.body;
+  // Handle cases where Vercel returns the body as a raw unparsed URL-encoded string
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      // Parse urlencoded string manually
+      const params = new URLSearchParams(body);
+      body = Object.fromEntries(params);
+    } catch (e) {
+      console.error('Failed to parse string body:', e);
+    }
+  }
+
+  const { image, filename } = body || {};
 
   if (!image) {
-    return res.status(400).json({ error: 'Image data missing' });
+    return res.status(400).json({ error: 'Image data missing from request' });
   }
 
   try {
