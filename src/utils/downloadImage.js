@@ -1,4 +1,4 @@
-import { toPng } from 'html-to-image';
+import { toBlob } from 'html-to-image';
 import { saveAs } from 'file-saver';
 
 export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png') => {
@@ -8,8 +8,8 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png')
   try {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // Generate canvas
-    const dataUrl = await toPng(element, {
+    // Generate a raw Blob directly (bypasses massive Base64 memory overhead that crashes Android)
+    const blob = await toBlob(element, {
       quality: 1.0,
       pixelRatio: isMobile ? 1 : 2, 
       style: {
@@ -18,17 +18,14 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.png')
       }
     });
 
-    if (isMobile) {
-      // On mobile, return the image data directly to the UI
-      // so we can show a bulletproof "Long Press to Save" modal
-      return { success: true, dataUrl, isMobile: true };
+    if (!blob) {
+       throw new Error('Blob generation failed');
     }
 
-    // On Desktop, standard downloading works flawlessly
-    const blob = await (await fetch(dataUrl)).blob();
+    // Force a direct download identical to desktop
     saveAs(blob, filename);
     
-    return { success: true, isMobile: false };
+    return { success: true };
   } catch (error) {
     console.error('Error generating image:', error);
     return { success: false };
