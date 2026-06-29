@@ -1,6 +1,5 @@
 import React from 'react';
 import { Clock, Calendar, MapPin, Users, Trophy } from 'lucide-react';
-import headerImg from '../assets/header.png';
 
 export const ScoreboardImage = React.memo(({ scoreboard }) => {
   return (
@@ -12,7 +11,7 @@ export const ScoreboardImage = React.memo(({ scoreboard }) => {
          {/* Header Section from Image */}
          <div className="w-full mb-8 relative flex justify-center shrink-0">
             <img 
-              src={headerImg} 
+              src={new URL('../assets/header.png', import.meta.url).href} 
               alt="Tournament Header" 
               className="w-full h-auto object-cover border-b-[3px] border-[#FFD700]"
               onError={(e) => {
