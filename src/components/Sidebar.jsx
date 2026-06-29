@@ -28,7 +28,7 @@ export const Sidebar = ({
         onResetForm={resetForm}
       />
       
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 pb-32">
         <h2 className="text-xl font-bold mb-6 text-foreground tracking-tight">YMCA Scoreboard Editor</h2>
         
         <TournamentEditor scoreboard={scoreboard} onChange={updateScoreboard} />
