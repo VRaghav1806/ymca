@@ -18,40 +18,21 @@ export const downloadImage = async (elementId, filename = 'YMCA_SCOREBOARD.jpg')
       }
     });
 
-    if (!dataUrl) {
-       throw new Error('Image generation failed');
+    if (isMobile) {
+      // On mobile, securely return the raw image data back to the UI
+      // so it can be rendered safely inside the bulletproof Long-Press Modal
+      return { success: true, dataUrl, isMobile: true };
     }
 
-    // Vercel Serverless Form Submission (Bypasses all mobile blockers)
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/api/download';
-    form.style.display = 'none';
-
-    const imageInput = document.createElement('input');
-    imageInput.type = 'hidden';
-    imageInput.name = 'image';
-    imageInput.value = dataUrl;
-
-    const nameInput = document.createElement('input');
-    nameInput.type = 'hidden';
-    nameInput.name = 'filename';
-    nameInput.value = filename;
-
-    form.appendChild(imageInput);
-    form.appendChild(nameInput);
-    document.body.appendChild(form);
+    // On Desktop, force a direct native download using the Data URL
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     
-    form.submit();
-    
-    // Cleanup
-    setTimeout(() => {
-      if (document.body.contains(form)) {
-        document.body.removeChild(form);
-      }
-    }, 1000);
-    
-    return { success: true };
+    return { success: true, isMobile: false };
   } catch (error) {
     console.error('Error generating image:', error);
     return { success: false };
