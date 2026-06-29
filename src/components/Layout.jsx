@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Preview } from './Preview';
+import { DownloadButton } from './DownloadButton';
 import { useScoreboard } from '../hooks/useScoreboard';
 
 export const Layout = () => {
@@ -53,8 +54,13 @@ export const Layout = () => {
         />
       </div>
       
-      <div className={`${activeTab === 'preview' ? 'flex' : 'hidden'} md:flex h-full flex-1 min-w-0`}>
+      <div className={`${activeTab === 'preview' ? 'flex' : 'hidden'} md:flex h-full flex-1 min-w-0 relative`}>
         <Preview scoreboard={scoreboard} zoom={zoom} />
+        
+        {/* Floating Download Button on Mobile */}
+        <div className="md:hidden absolute bottom-4 left-4 right-4 z-50">
+           <DownloadButton className="shadow-2xl" />
+        </div>
       </div>
     </div>
   );
