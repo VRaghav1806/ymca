@@ -21,7 +21,7 @@ export default function handler(req, res) {
     res.setHeader('Content-Disposition', `attachment; filename="${filename || 'YMCA_SCOREBOARD.jpg'}"`);
     res.setHeader('Content-Length', buffer.length);
     
-    return res.send(buffer);
+    res.end(buffer);
   } catch (error) {
     console.error('Serverless Function Error:', error);
     return res.status(500).json({ error: 'Failed to process image download' });
