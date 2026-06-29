@@ -10,8 +10,8 @@ export default function handler(req, res) {
   }
 
   try {
-    // Extract base64 data from the Data URL (data:image/jpeg;base64,...)
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    // Extract base64 data from the Data URL and restore any plus signs lost during form URL decoding
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, '').replace(/ /g, '+');
     
     // Convert base64 to a binary buffer
     const buffer = Buffer.from(base64Data, 'base64');
